@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookApp.Data
+namespace BookApp2.Data
 {
     public class Repository<TEntity, TKey, TContext> : IRepository<TEntity, TKey, TContext> where TEntity : class
-                                                                                            where TContext : DbContext
+                                                                                            where TContext : DbContext, IDisposable
     {
         protected readonly TContext _context;
         protected readonly DbSet<TEntity> _dbSet;
@@ -21,14 +21,12 @@ namespace BookApp.Data
         }
 
         public async Task<IEnumerable<TEntity>> GetAll()
-        {
-            return await _context.Set<TEntity>().AsQueryable().ToListAsync();
-        }
+            => await _context.Set<TEntity>().AsQueryable().ToListAsync();
+
 
         public async Task<TEntity> GetById(TKey id)
-        {
-            return await _context.Set<TEntity>().FindAsync(id);
-        }
+            => await _context.Set<TEntity>().FindAsync(id);
+
 
         public async Task<int> Add(TEntity entity)
         {
@@ -54,9 +52,22 @@ namespace BookApp.Data
             return result == 1 ? 1 : 0;
         }
 
-        public Task<int> Update(TEntity entity)
+        public async Task<int> Update(TEntity entity)
         {
-            throw new NotImplementedException();
+            //_context.Entry(entity).State = EntityState.Modified;
+            _dbSet.Update(entity);
+            return await _context.SaveChangesAsync();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing) { _context.Dispose(); }
         }
     }
 }

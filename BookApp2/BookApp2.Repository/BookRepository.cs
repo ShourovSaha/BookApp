@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using BookApp.Data;
+using BookApp2.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace BookApp.Repository
+namespace BookApp2.Repository
 {
     public class BookRepository : Repository<Book, int, BookAppDbContext>, IBookRepository
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BookApp.Repository
+namespace BookApp2.Repository
 {
     public class Book
     {
@@ -12,5 +12,6 @@ namespace BookApp.Repository
         public string Publisher { get; set; }
         public string Genre { get; set; }
         public int Price { get; set; }
+        public int CatalogueId { get; set; }
     }
 }

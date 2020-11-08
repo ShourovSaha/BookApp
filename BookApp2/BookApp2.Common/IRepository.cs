@@ -5,11 +5,11 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookApp.Data
+namespace BookApp2.Data
 {
     public interface IRepository<TEntity, TKey, TContext> 
                                 where TEntity : class
-                                where TContext : DbContext
+                                where TContext : DbContext 
     {
         Task<IEnumerable<TEntity>> GetAll();
         Task<TEntity> GetById(TKey id);

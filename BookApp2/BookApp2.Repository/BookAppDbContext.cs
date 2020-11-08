@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 
-namespace BookApp.Repository
+namespace BookApp2.Repository
 {
     public class BookAppDbContext : DbContext
     {
@@ -9,5 +9,11 @@ namespace BookApp.Repository
         { }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<Catalogue> Catalogues { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Seed();
+        }
     }
 }

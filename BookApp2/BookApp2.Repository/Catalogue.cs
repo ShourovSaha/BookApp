@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BookApp.Repository
+namespace BookApp2.Repository
 {
     public class Catalogue
     {

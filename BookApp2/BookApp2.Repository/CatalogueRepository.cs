@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using BookApp.Data;
+using BookApp2.Data;
 
-namespace BookApp.Repository
+namespace BookApp2.Repository
 {
     public class CatalogueRepository : Repository<Catalogue, int, BookAppDbContext>, ICatalogueRepository
     {
