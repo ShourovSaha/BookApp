@@ -14,8 +14,8 @@ namespace BookApp2.Data
         Task<IEnumerable<TEntity>> GetAll();
         Task<TEntity> GetById(TKey id);
         Task<int> Count(Expression<Func<TEntity, bool>> filter = null);
-        Task<int> Add(TEntity entity);
-        Task<int> Delete(TEntity entity);
-        Task<int> Update(TEntity entity);
+        Task Add(TEntity entity);
+        void Delete(TEntity entity);
+        void Update(TEntity entity);
     }
 }

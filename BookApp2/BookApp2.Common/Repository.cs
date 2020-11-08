@@ -28,11 +28,9 @@ namespace BookApp2.Data
             => await _context.Set<TEntity>().FindAsync(id);
 
 
-        public async Task<int> Add(TEntity entity)
+        public async Task Add(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
-            var result = await _context.SaveChangesAsync();
-            return result == 1 ? 1 : 0;
         }
 
         public async Task<int> Count(Expression<Func<TEntity, bool>> filter = null)
@@ -45,29 +43,15 @@ namespace BookApp2.Data
             return count;
         }
 
-        public async Task<int> Delete(TEntity entity)
+        public void Delete(TEntity entity)
         {
             _dbSet.Remove(entity);
-            var result = await _context.SaveChangesAsync();
-            return result == 1 ? 1 : 0;
         }
 
-        public async Task<int> Update(TEntity entity)
+        public void Update(TEntity entity)
         {
             //_context.Entry(entity).State = EntityState.Modified;
             _dbSet.Update(entity);
-            return await _context.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing) { _context.Dispose(); }
         }
     }
 }

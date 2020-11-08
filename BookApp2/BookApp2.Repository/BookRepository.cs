@@ -18,5 +18,7 @@ namespace BookApp2.Repository
         {
             return await _context.Books.AsQueryable().Where(g => g.Genre == gener).ToListAsync();
         }
+
+        public void Test() { }
     }
 }

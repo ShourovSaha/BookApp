@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BookApp2.Repository;
+using BookApp2.Models;
 
 namespace BookApp2.Controllers
 {
@@ -12,18 +13,18 @@ namespace BookApp2.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        IBookRepository _repository;
+        readonly IBookAppUnitOfWork _unitOfWork;
 
-        public BooksController(IBookRepository repository)
+        public BooksController(IBookAppUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         //api/Books
         [HttpGet]
         public async Task<IActionResult> GetBooks()
         {
-            var data = await _repository.GetAll();
+            var data = await _unitOfWork.BookRepository.GetAll();
             return Ok(data);
         }
 
@@ -31,21 +32,21 @@ namespace BookApp2.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBook([FromRoute] int id)
         {
-            var data = await _repository.GetById(id);
+            var data = await _unitOfWork.BookRepository.GetById(id);
             return Ok(data);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Book model)
         {
-            var result = await _repository.Add(model);
-            return Ok(result == 1 ? 1 : 0);
+            await _unitOfWork.BookRepository.Add(model);
+            return Ok(await _unitOfWork.Save() == 1 ? 1 : 0);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Book model)
         {
-            var result = await _repository.GetById(id);
+            var result = await _unitOfWork.BookRepository.GetById(id);
             result.Price = model.Price;
             result.Title = model.Title;
             result.Author = model.Author;
@@ -55,7 +56,7 @@ namespace BookApp2.Controllers
 
             if (result != null)
             {
-                try { await _repository.Update(result); }
+                try { _unitOfWork.BookRepository.Update(result); }
                 catch (Exception ex)
                 {
                     return Ok(ex.Message);
@@ -69,9 +70,35 @@ namespace BookApp2.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var data = await _repository.GetById(id);
-            await _repository.Delete(data);
-            return Ok();
+            var data = await _unitOfWork.BookRepository.GetById(id);
+            _unitOfWork.BookRepository.Delete(data);
+            var result = await _unitOfWork.Save();
+            return Ok(result);
+        }
+
+        //api/Books
+        [Route("PostBookInfo")]
+        [HttpPost]
+        public async Task<IActionResult> PostBookInfo([FromBody]BookInfoRequestModel requestModel)
+        {
+            var book = new Book
+            {
+                Title = requestModel.Title,
+                Author = requestModel.Author,
+                Publisher = requestModel.Publisher,
+                Genre = requestModel.Genre,
+                Price = requestModel.Price
+            };
+
+            var catalogue = new Catalogue
+            {
+                Name = requestModel.CatalogueName
+            };
+
+            await _unitOfWork.CatalogueRepository.Add(catalogue);
+            await _unitOfWork.BookRepository.Add(book);
+            var result = await _unitOfWork.Save();
+            return Ok(result);
         }
     }
 }
