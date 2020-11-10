@@ -81,24 +81,48 @@ namespace BookApp2.Controllers
         [HttpPost]
         public async Task<IActionResult> PostBookInfo([FromBody]BookInfoRequestModel requestModel)
         {
-            var book = new Book
-            {
-                Title = requestModel.Title,
-                Author = requestModel.Author,
-                Publisher = requestModel.Publisher,
-                Genre = requestModel.Genre,
-                Price = requestModel.Price
-            };
+            var catalogueId = Guid.NewGuid();
 
             var catalogue = new Catalogue
             {
+                CatalogueId = catalogueId,
                 Name = requestModel.CatalogueName
             };
 
             await _unitOfWork.CatalogueRepository.Add(catalogue);
-            await _unitOfWork.BookRepository.Add(book);
+
+            foreach  (var i in requestModel.BooksInfo)
+            {
+                var book = new Book
+                {
+                    Title = i.Title,
+                    Author = i.Author,
+                    Publisher = i.Publisher,
+                    Genre = i.Genre,
+                    Price = i.Price,
+                    CatalogueId = catalogueId
+                };
+
+                await _unitOfWork.BookRepository.Add(book);
+            }
+            
             var result = await _unitOfWork.Save();
             return Ok(result);
+        }
+
+        [Route("BookCount")]
+        public async Task<IActionResult> BookCount()
+        {
+            var numberOfBooks = await _unitOfWork.BookRepository.Count(c => c.Price > 220);
+            return  Ok(numberOfBooks);
+        }
+
+        [Route("GetBooksForPagination")]
+        [HttpGet]
+        public async Task<IActionResult> GetBooks(int numberOfRowsToShow, int pageIndex)
+        {
+            var data = await _unitOfWork.BookRepository.GetDataDinamicaly(numberOfRowsToShow, pageIndex);
+            return Ok(data);
         }
     }
 }

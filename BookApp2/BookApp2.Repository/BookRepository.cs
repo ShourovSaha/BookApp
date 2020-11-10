@@ -19,6 +19,11 @@ namespace BookApp2.Repository
             return await _context.Books.AsQueryable().Where(g => g.Genre == gener).ToListAsync();
         }
 
-        public void Test() { }
+        public async Task<(int totalRows, IEnumerable<Book> books)> GetDataDinamicaly(int numberOfRowsToShow, int pageIndex)
+        {
+            var data =  await _context.Books.Skip<Book>(numberOfRowsToShow * (pageIndex - 1)).Take<Book>(numberOfRowsToShow).ToListAsync();
+            var totalRows = await this.Count(c => c.Id > -1);
+            return (totalRows, data);
+        }
     }
 }

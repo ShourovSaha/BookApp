@@ -6,7 +6,7 @@ namespace BookApp2.Repository
 {
     public class Catalogue
     {
-        public int CatalogueId { get; set; }
+        public Guid CatalogueId { get; set; }
         public string Name { get; set; }
         public List<Book> Books { get; set; }
     }
